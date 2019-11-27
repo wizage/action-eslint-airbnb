@@ -5,7 +5,7 @@ const { GITHUB_WORKSPACE } = process.env
 
 try {
   var files = fs.readdirSync(GITHUB_WORKSPACE);
-  console.log(files);
+  console.log(files, GITHUB_WORKSPACE);
   // `who-to-greet` input defined in action metadata file
   const nameToGreet = core.getInput('who-to-greet');
   console.log(`Hello ${nameToGreet}!`);
