@@ -1,26 +1,118 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
-const fs = require('fs');
-const { GITHUB_WORKSPACE } = process.env
+const request = require('request');
 const eslint = require('eslint');
+const { GITHUB_SHA, GITHUB_EVENT_PATH, GITHUB_TOKEN, GITHUB_WORKSPACE } = process.env
 
-try {
-  var files = fs.readdirSync(GITHUB_WORKSPACE);
+const event = require(GITHUB_EVENT_PATH)
+const { repository } = event
+const {
+  owner: { login: owner }
+} = repository
+const { name: repo } = repository
 
-  const cli = new eslint.CLIEngine();
-  console.log(GITHUB_WORKSPACE);
+const checkName = 'ESLint check'
 
-  const report = cli.executeOnFiles([GITHUB_WORKSPACE]);
-
-  console.log(report);
-  // `who-to-greet` input defined in action metadata file
-  const nameToGreet = core.getInput('who-to-greet');
-  console.log(`Hello ${nameToGreet}!`);
-  const time = (new Date()).toTimeString();
-  core.setOutput("time", time);
-  // Get the JSON webhook payload for the event that triggered the workflow
-  const payload = JSON.stringify(github.context.payload, undefined, 2)
-  console.log(`The event payload: ${payload}`);
-} catch (error) {
-  core.setFailed(error.message);
+const headers = {
+  'Content-Type': 'application/json',
+  Accept: 'application/vnd.github.antiope-preview+json',
+  Authorization: `Bearer ${GITHUB_TOKEN}`,
+  'User-Agent': 'eslint-action',
 }
+
+async function createCheck() {
+  const body = {
+    name: checkName,
+    head_sha: GITHUB_SHA,
+    status: 'in_progress',
+    started_at: new Date(),
+  }
+
+  const options = {
+    url: 'https://api.github.com/repos/${owner}/${repo}/check-runs',
+    method: 'POST',
+    headers,
+    body
+  };
+
+  const data = await request(options);
+  console.log(data);
+  const { id } = data;
+  return id;
+}
+
+function eslint() {
+
+  const cli = new eslint.CLIEngine()
+  const report = cli.executeOnFiles(['.'])
+  // fixableErrorCount, fixableWarningCount are available too
+  const { results, errorCount, warningCount } = report
+
+  const levels = ['', 'warning', 'failure']
+
+  const annotations = []
+  for (const result of results) {
+    const { filePath, messages } = result
+    const path = filePath.substring(GITHUB_WORKSPACE.length + 1)
+    for (const msg of messages) {
+      const { line, severity, ruleId, message } = msg
+      const annotationLevel = levels[severity]
+      annotations.push({
+        path,
+        start_line: line,
+        end_line: line,
+        annotation_level: annotationLevel,
+        message: `[${ruleId}] ${message}`
+      })
+    }
+  }
+
+  return {
+    conclusion: errorCount > 0 ? 'failure' : 'success',
+    output: {
+      title: checkName,
+      summary: `${errorCount} error(s), ${warningCount} warning(s) found`,
+      annotations
+    }
+  }
+}
+
+async function updateCheck(id, conclusion, output) {
+  const body = {
+    name: checkName,
+    head_sha: GITHUB_SHA,
+    status: 'completed',
+    completed_at: new Date(),
+    conclusion,
+    output
+  }
+
+  await request(`https://api.github.com/repos/${owner}/${repo}/check-runs/${id}`, {
+    method: 'PATCH',
+    headers,
+    body
+  })
+}
+
+function exitWithError(err) {
+  console.error('Error', err.stack)
+  if (err.data) {
+    console.error(err.data)
+  }
+  process.exit(1)
+}
+
+async function run() {
+  const id = await createCheck()
+  try {
+    const { conclusion, output } = eslint()
+    console.log(output.summary)
+    await updateCheck(id, conclusion, output)
+    if (conclusion === 'failure') {
+      process.exit(78)
+    }
+  } catch (err) {
+    await updateCheck(id, 'failure')
+    exitWithError(err)
+  }
+}
+
+run().catch(exitWithError)
