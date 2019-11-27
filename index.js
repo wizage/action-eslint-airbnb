@@ -76,8 +76,8 @@ function eslint() {
 }
 
 async function updateCheck(id, conclusion, output) {
-  const { annotations } = output;
-  if (annotations) {
+  if ('annotations' in output) {
+    const { annotations } = output;
     while (annotations.length >= 50) {
       const newAnnotations = annotations.splice(0, 50);
       const newOutput = output;
