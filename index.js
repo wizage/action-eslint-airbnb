@@ -26,7 +26,7 @@ async function createCheck() {
     name: checkName,
     head_sha: GITHUB_SHA,
     status: 'in_progress',
-    started_at: new Date(),
+    started_at: new Date()
   };
 
   const { data } = await request(`https://api.github.com/repos/${owner}/${repo}/check-runs`, {
