@@ -18,7 +18,7 @@ const headers = {
   'Content-Type': 'application/json',
   Accept: 'application/vnd.github.antiope-preview+json',
   Authorization: `Bearer ${GITHUB_TOKEN}`,
-  'User-Agent': 'eslint-action',
+  'User-Agent': 'eslint-action'
 };
 
 async function createCheck() {
