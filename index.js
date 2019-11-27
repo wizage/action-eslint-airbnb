@@ -7,9 +7,10 @@ const eslint = require('eslint');
 try {
   // var files = fs.readdirSync(GITHUB_WORKSPACE);
 
-  const cli = new eslint.CLIEngine()
+  const cli = new eslint.CLIEngine();
+  console.log("here");
 
-  const report = cli.executeOnFiles([`${GITHUB_WORKSPACE}/.`]);
+  const report = cli.executeOnFiles([GITHUB_WORKSPACE]);
 
   console.log(report);
   // `who-to-greet` input defined in action metadata file
