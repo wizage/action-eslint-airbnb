@@ -30,7 +30,7 @@ async function createCheck() {
     url: 'https://api.github.com/repos/${owner}/${repo}/check-runs',
     method: 'POST',
     headers,
-    body
+    body: JSON.stringify(body),
   };
 
   const data = await request(options);
