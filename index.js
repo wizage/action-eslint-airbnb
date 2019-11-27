@@ -10,7 +10,7 @@ try {
   const cli = new eslint.CLIEngine();
   console.log(GITHUB_WORKSPACE);
 
-  const report = cli.executeOnFiles(files);
+  const report = cli.executeOnFiles([GITHUB_WORKSPACE]);
 
   console.log(report);
   // `who-to-greet` input defined in action metadata file
