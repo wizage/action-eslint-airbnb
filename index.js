@@ -74,19 +74,34 @@ function eslint() {
 }
 
 async function updateCheck(id, conclusion, output) {
+  while (output.length >= 50) {
+    let annotations = output.splice(0, 50);
+    const body = {
+      name: checkName,
+      head_sha: GITHUB_SHA,
+      annotations,
+    };
+
+    await request(`https://api.github.com/repos/${owner}/${repo}/check-runs/${id}`, {
+      method: 'PATCH',
+      headers,
+      body
+    });
+  }
+
   const body = {
     name: checkName,
     head_sha: GITHUB_SHA,
     status: 'completed',
     completed_at: new Date(),
     conclusion,
-    output
-  }
+    output,
+  };
 
   await request(`https://api.github.com/repos/${owner}/${repo}/check-runs/${id}`, {
     method: 'PATCH',
     headers,
-    body
+    body,
   })
 }
 
