@@ -74,7 +74,7 @@ function eslint() {
 }
 
 async function updateCheck(id, conclusion, output) {
-  let {annotations} = output.annotations;
+  let {annotations} = output;
   while (annotations.length >= 50) {
     let newAnnotations = annotations.splice(0, 50);
     let newOutput = output;
@@ -122,7 +122,7 @@ async function run() {
   const id = await createCheck()
   try {
     const { conclusion, output } = eslint()
-    console.log(output.annotations)
+    console.log(output.summary)
     await updateCheck(id, conclusion, output)
     if (conclusion === 'failure') {
       process.exit(78)
