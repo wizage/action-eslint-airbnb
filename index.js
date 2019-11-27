@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 const core = require('@actions/core');
+const eslint = require('eslint');
 const request = require('./request');
 
 const { GITHUB_SHA, GITHUB_EVENT_PATH, GITHUB_WORKSPACE } = process.env;
@@ -38,7 +39,7 @@ async function createCheck() {
   return id;
 }
 
-function eslint() {
+function runESLint() {
   const cli = new eslint.CLIEngine();
   const report = cli.executeOnFiles(['.']);
   // fixableErrorCount, fixableWarningCount are available too
@@ -124,7 +125,7 @@ function exitWithError(err) {
 async function run() {
   const id = await createCheck();
   try {
-    const { conclusion, output } = eslint();
+    const { conclusion, output } = runESLint();
     console.log(output.summary);
     await updateCheck(id, conclusion, output);
     if (conclusion === 'failure') {
