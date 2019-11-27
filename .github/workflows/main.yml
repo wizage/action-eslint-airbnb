@@ -5,5 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     name: A job to say hello
     steps:
+    - uses: actions/checkout@v1
     - uses: actions/setup-node@v1
+      with:
+        node-verision: '12.x'
     - run : npm run lint
