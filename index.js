@@ -49,9 +49,9 @@ async function getChangedFiles() {
 		return stdout.trim().split('\n');
 }
 
-function runESLint() {
+async function runESLint() {
   const cli = new eslint.CLIEngine();
-  const files = getChangedFiles();
+  const files = await getChangedFiles();
   const report = cli.executeOnFiles(files);
   // fixableErrorCount, fixableWarningCount are available too
   const { results, errorCount, warningCount } = report;
@@ -136,7 +136,7 @@ function exitWithError(err) {
 async function run() {
   const id = await createCheck();
   try {
-    const { conclusion, output } = runESLint();
+    const { conclusion, output } = await runESLint();
     console.log(output.summary);
     await updateCheck(id, conclusion, output);
     if (conclusion === 'failure') {
