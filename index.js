@@ -39,9 +39,19 @@ async function createCheck() {
   return id;
 }
 
+async function getChangedFiles() {
+  const util = require('util'),
+			exec = util.promisify(require('child_process').exec),
+			{ stdout } = await exec(
+				`git diff origin/${targetBranch}... --name-only --diff-filter=d`
+			);
+		return stdout.trim().split('\n');
+}
+
 function runESLint() {
   const cli = new eslint.CLIEngine();
-  const report = cli.executeOnFiles(['.']);
+  const files = getChangedFiles();
+  const report = cli.executeOnFiles(files);
   // fixableErrorCount, fixableWarningCount are available too
   const { results, errorCount, warningCount } = report;
 
