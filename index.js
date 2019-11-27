@@ -33,7 +33,7 @@ async function createCheck() {
     body: JSON.stringify(body),
   };
 
-  const data = await request(options);
+  const data = await request(options).promise();
   console.log(data);
   const { id } = data;
   return id;
