@@ -11,6 +11,7 @@ jobs:
       uses: wizage/action-eslint-airbnb@master
       with:
         who-to-greet: 'Mona the Octocat'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
     # Use the output from the `hello` step
     - name: Get the output time
       run: echo "The time was ${{ steps.hello.outputs.time }}"

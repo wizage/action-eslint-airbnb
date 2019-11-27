@@ -5,6 +5,10 @@ inputs:
     description: 'Who to greet'
     required: true
     default: 'World'
+  repo-token:  # id of input
+    description: 'Token for repo'
+    required: true
+    default: 'NA'
 outputs:
   time: # id of output
     description: 'The time we greeted you'

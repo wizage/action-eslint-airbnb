@@ -1,6 +1,6 @@
 const request = require('./request')
 
-const { GITHUB_SHA, GITHUB_EVENT_PATH, GITHUB_TOKEN, GITHUB_WORKSPACE } = process.env
+const { GITHUB_SHA, GITHUB_EVENT_PATH, GITHUB_WORKSPACE } = process.env
 const event = require(GITHUB_EVENT_PATH)
 const { repository } = event
 const {
@@ -9,6 +9,8 @@ const {
 const { name: repo } = repository
 
 const checkName = 'ESLint check'
+
+const GITHUB_TOKEN = core.getInput('repo-token');
 
 const headers = {
   'Content-Type': 'application/json',
