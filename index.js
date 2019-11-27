@@ -77,26 +77,26 @@ function runESLint() {
 }
 
 async function updateCheck(id, conclusion, output) {
-  if (output && 'annotations' in output) {
-    const { annotations } = output;
-    while (annotations.length >= 50) {
-      const newAnnotations = annotations.splice(0, 50);
-      const newOutput = output;
-      newOutput.annotations = newAnnotations;
-      const body = {
-        name: checkName,
-        head_sha: GITHUB_SHA,
-        newOutput,
-      };
+  // if (output && 'annotations' in output) {
+  //   const { annotations } = output;
+  //   while (annotations.length >= 50) {
+  //     const newAnnotations = annotations.splice(0, 50);
+  //     const newOutput = output;
+  //     newOutput.annotations = newAnnotations;
+  //     const body = {
+  //       name: checkName,
+  //       head_sha: GITHUB_SHA,
+  //       newOutput,
+  //     };
 
-      await request(`https://api.github.com/repos/${owner}/${repo}/check-runs/${id}`, {
-        method: 'PATCH',
-        headers,
-        body,
-      });
-    }
-    output.annotations = annotations;
-  }
+  //     await request(`https://api.github.com/repos/${owner}/${repo}/check-runs/${id}`, {
+  //       method: 'PATCH',
+  //       headers,
+  //       body,
+  //     });
+  //   }
+  //   output.annotations = annotations;
+  // }
 
   const body = {
     name: checkName,
