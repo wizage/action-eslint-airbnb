@@ -8,7 +8,7 @@ try {
   var files = fs.readdirSync(GITHUB_WORKSPACE);
 
   const cli = new eslint.CLIEngine();
-  console.log("here");
+  console.log(GITHUB_WORKSPACE);
 
   const report = cli.executeOnFiles(files);
 
