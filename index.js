@@ -1,7 +1,6 @@
-const request = require('request');
-const eslint = require('eslint');
-const { GITHUB_SHA, GITHUB_EVENT_PATH, GITHUB_TOKEN, GITHUB_WORKSPACE } = process.env
+const request = require('./request')
 
+const { GITHUB_SHA, GITHUB_EVENT_PATH, GITHUB_TOKEN, GITHUB_WORKSPACE } = process.env
 const event = require(GITHUB_EVENT_PATH)
 const { repository } = event
 const {
@@ -15,7 +14,7 @@ const headers = {
   'Content-Type': 'application/json',
   Accept: 'application/vnd.github.antiope-preview+json',
   Authorization: `Bearer ${GITHUB_TOKEN}`,
-  'User-Agent': 'eslint-action',
+  'User-Agent': 'eslint-action'
 }
 
 async function createCheck() {
@@ -23,25 +22,20 @@ async function createCheck() {
     name: checkName,
     head_sha: GITHUB_SHA,
     status: 'in_progress',
-    started_at: new Date(),
+    started_at: new Date()
   }
 
-  const options = {
-    url: `https://api.github.com/repos/${owner}/${repo}/check-runs/${id}`,
+  const { data } = await request(`https://api.github.com/repos/${owner}/${repo}/check-runs`, {
     method: 'POST',
     headers,
-    body: JSON.stringify(body),
-  };
-  let test = {};
-  await request(options, (error, data) => {
-    console.log(error, data);
-    test = data;
-  });
-  const { id } = test;
-  return id;
+    body
+  })
+  const { id } = data
+  return id
 }
 
-function eslintFunction() {
+function eslint() {
+  const eslint = require('eslint')
 
   const cli = new eslint.CLIEngine()
   const report = cli.executeOnFiles(['.'])
@@ -87,16 +81,11 @@ async function updateCheck(id, conclusion, output) {
     output
   }
 
-  const options = {
-    url: `https://api.github.com/repos/${owner}/${repo}/check-runs/${id}`,
+  await request(`https://api.github.com/repos/${owner}/${repo}/check-runs/${id}`, {
     method: 'PATCH',
     headers,
-    body: JSON.stringify(body),
-  };
-
-  await request(options, (error, data) => {
-    console.log(data);
-  });
+    body
+  })
 }
 
 function exitWithError(err) {
@@ -110,7 +99,7 @@ function exitWithError(err) {
 async function run() {
   const id = await createCheck()
   try {
-    const { conclusion, output } = eslintFunction()
+    const { conclusion, output } = eslint()
     console.log(output.summary)
     await updateCheck(id, conclusion, output)
     if (conclusion === 'failure') {
