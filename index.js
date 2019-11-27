@@ -122,7 +122,7 @@ async function run() {
   const id = await createCheck()
   try {
     const { conclusion, output } = eslint()
-    console.log(output.summary)
+    console.log(output.annotations)
     await updateCheck(id, conclusion, output)
     if (conclusion === 'failure') {
       process.exit(78)
