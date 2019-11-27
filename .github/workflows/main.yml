@@ -7,7 +7,7 @@ jobs:
     steps:
     - name: Hello world action step
       id: hello
-      uses: wizage/action-eslint-airbnb@latest
+      uses: wizage/action-eslint-airbnb@master
       with:
         who-to-greet: 'Mona the Octocat'
     # Use the output from the `hello` step
