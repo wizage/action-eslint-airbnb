@@ -74,12 +74,15 @@ function eslint() {
 }
 
 async function updateCheck(id, conclusion, output) {
-  while (output.length >= 50) {
-    let annotations = output.splice(0, 50);
+  let {annotations} = output.annotations;
+  while (annotations.length >= 50) {
+    let newAnnotations = annotations.splice(0, 50);
+    let newOutput = output;
+    newOutput.annotations = newAnnotations;
     const body = {
       name: checkName,
       head_sha: GITHUB_SHA,
-      annotations,
+      newOutput,
     };
 
     await request(`https://api.github.com/repos/${owner}/${repo}/check-runs/${id}`, {
@@ -88,6 +91,8 @@ async function updateCheck(id, conclusion, output) {
       body
     });
   }
+
+  output.annotations = annotations;
 
   const body = {
     name: checkName,
