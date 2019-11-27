@@ -1,5 +1,5 @@
 const request = require('./request')
-
+const core = require('@actions/core');
 const { GITHUB_SHA, GITHUB_EVENT_PATH, GITHUB_WORKSPACE } = process.env
 const event = require(GITHUB_EVENT_PATH)
 const { repository } = event
