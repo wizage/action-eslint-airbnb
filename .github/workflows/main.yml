@@ -6,9 +6,4 @@ jobs:
     name: A job to say hello
     steps:
     - uses: actions/checkout@v1
-    - name: Hello world action step
-      id: hello
-      uses: wizage/action-eslint-airbnb@master
-      with:
-        who-to-greet: 'Mona the Octocat'
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/setup-node@v1
