@@ -27,14 +27,14 @@ async function createCheck() {
   }
 
   const options = {
-    url: 'https://api.github.com/repos/${owner}/${repo}/check-runs',
+    url: `https://api.github.com/repos/${owner}/${repo}/check-runs/${id}`,
     method: 'POST',
     headers,
     body: JSON.stringify(body),
   };
   let test = {};
   await request(options, (error, data) => {
-    console.log(data);
+    console.log(error, data);
     test = data;
   });
   const { id } = test;
@@ -87,11 +87,16 @@ async function updateCheck(id, conclusion, output) {
     output
   }
 
-  await request(`https://api.github.com/repos/${owner}/${repo}/check-runs/${id}`, {
+  const options = {
+    url: `https://api.github.com/repos/${owner}/${repo}/check-runs/${id}`,
     method: 'PATCH',
     headers,
-    body
-  })
+    body: JSON.stringify(body),
+  };
+
+  await request(options, (error, data) => {
+    console.log(data);
+  });
 }
 
 function exitWithError(err) {
