@@ -39,7 +39,7 @@ async function createCheck() {
   return id;
 }
 
-function eslint() {
+function eslintFunction() {
 
   const cli = new eslint.CLIEngine()
   const report = cli.executeOnFiles(['.'])
@@ -103,7 +103,7 @@ function exitWithError(err) {
 async function run() {
   const id = await createCheck()
   try {
-    const { conclusion, output } = eslint()
+    const { conclusion, output } = eslintFunction()
     console.log(output.summary)
     await updateCheck(id, conclusion, output)
     if (conclusion === 'failure') {
