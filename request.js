@@ -15,7 +15,6 @@ module.exports = (url, options) => new Promise((resolve, reject) => {
           reject(err);
         } else {
           resolve({ res, data: JSON.parse(data) });
-          console.log(data);
         }
       });
     })
