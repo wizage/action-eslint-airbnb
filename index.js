@@ -40,10 +40,11 @@ async function createCheck() {
 }
 
 async function getChangedFiles() {
+  const branch = event.pull_request.base.ref;
   const util = require('util'),
 			exec = util.promisify(require('child_process').exec),
 			{ stdout } = await exec(
-				`git diff origin/${targetBranch}... --name-only --diff-filter=d`
+				`git diff origin/${branch}... --name-only --diff-filter=d`
 			);
 		return stdout.trim().split('\n');
 }
