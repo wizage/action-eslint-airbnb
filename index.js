@@ -32,10 +32,12 @@ async function createCheck() {
     headers,
     body: JSON.stringify(body),
   };
-
-  const data = await request(options).promise();
-  console.log(data);
-  const { id } = data;
+  let test = {};
+  await request(options, (error, data) => {
+    console.log(data);
+    test = data;
+  });
+  const { id } = test;
   return id;
 }
 
