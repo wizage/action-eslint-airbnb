@@ -19,7 +19,7 @@ const headers = {
   'Content-Type': 'application/json',
   Accept: 'application/vnd.github.antiope-preview+json',
   Authorization: `Bearer ${GITHUB_TOKEN}`,
-  'User-Agent': 'eslint-action',
+  'User-Agent': 'eslint-action'
 };
 
 async function createCheck() {
@@ -27,7 +27,7 @@ async function createCheck() {
     name: checkName,
     head_sha: GITHUB_SHA,
     status: 'in_progress',
-    started_at: new Date(),
+    started_at: new Date()
   };
 
   const { data } = await request(`https://api.github.com/repos/${owner}/${repo}/check-runs`, {
